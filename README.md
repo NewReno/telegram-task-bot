@@ -68,6 +68,33 @@ cp .env.example .env
 python main.py
 ```
 
+### Docker Setup 🐳
+
+You can also run the bot using Docker:
+
+1. **Configure environment**:
+```bash
+cp .env.example .env
+# Edit .env and add your bot token
+```
+
+2. **Build and run with Docker Compose**:
+```bash
+docker-compose up -d
+```
+
+3. **View logs**:
+```bash
+docker-compose logs -f
+```
+
+4. **Stop the bot**:
+```bash
+docker-compose down
+```
+
+**Note**: The `data/` directory is mounted as a volume, so your tasks persist between container restarts.
+
 ## Usage 📱
 
 ### Adding Tasks
