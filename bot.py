@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 # Main menu keyboard
 MAIN_MENU = ReplyKeyboardMarkup([
     ['📋 Show Tasks', '➕ Add Task'],
-    ['✅ Complete Task', '🔔 Reminders'],
+    ['✅ Complete Task', '⏰ Upcoming'],
     ['❓ Help']
 ], resize_keyboard=True)
 
@@ -46,7 +46,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Buttons:\n"
         "• 📋 Show Tasks - View your tasks\n"
         "• ✅ Complete Task - Mark tasks done\n"
-        "• 🔔 Reminders - Check for due tasks\n\n"
+        "• ⏰ Upcoming - View upcoming tasks\n\n"
         "Automatic reminders will be sent when tasks are due!",
         reply_markup=MAIN_MENU
     )
@@ -247,7 +247,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif message_text == '✅ Complete Task':
         await complete_task_command(update, context)
         return
-    elif message_text == '🔔 Reminders':
+    elif message_text == '⏰ Upcoming':
         await check_reminders_command(update, context)
         return
     elif message_text == '❓ Help':
