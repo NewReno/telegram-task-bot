@@ -26,6 +26,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "👋 Hello! I'm your task reminder bot.\n\n"
         "Use the buttons below or type:\n"
         "• Remind me Vacuum at 13:00\n"
+        "• Remind me Call friend in 10 minutes\n"
         "• add task Wake up at 08:00",
         reply_markup=MAIN_MENU
     )
@@ -35,9 +36,13 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /help command."""
     await update.message.reply_text(
         "🤖 Available commands:\n\n"
-        "Add tasks:\n"
+        "Add tasks (absolute time):\n"
         "• Remind me [task] at HH:MM\n"
         "• add task [task] at HH:MM\n\n"
+        "Add tasks (relative time):\n"
+        "• Remind me [task] in X minutes\n"
+        "• Remind me [task] in X hours\n"
+        "• Remind me [task] in 1 hour and 30 minutes\n\n"
         "Buttons:\n"
         "• 📋 Show Tasks - View your tasks\n"
         "• ✅ Complete Task - Mark tasks done\n"
@@ -79,9 +84,16 @@ async def add_task_prompt(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle add task button."""
     await update.message.reply_text(
         "➕ To add a task, type:\n\n"
+        "📍 Absolute time:\n"
         "• Remind me [task name] at HH:MM\n"
         "• add task [task name] at HH:MM\n\n"
-        "Example: Remind me Vacuum at 13:00",
+        "⏱ Relative time:\n"
+        "• Remind me [task name] in X minutes\n"
+        "• Remind me [task name] in X hours\n\n"
+        "Examples:\n"
+        "• Remind me Vacuum at 13:00\n"
+        "• Remind me Call friend in 10 minutes\n"
+        "• Remind me Meeting in 2 hours",
         reply_markup=MAIN_MENU
     )
 
