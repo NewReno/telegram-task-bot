@@ -67,13 +67,17 @@ class TaskScheduler:
         current_date = now.strftime('%Y-%m-%d')
         current_time = now.strftime('%H:%M')
         
+        logger.debug(f"Checking for due tasks at {current_time}")
+        
         # Get pending tasks for today
         pending_tasks = get_pending_tasks(current_date)
+        logger.debug(f"Found {len(pending_tasks)} pending tasks")
         
         for task in pending_tasks:
             # Skip if already reminded
             task_key = (task['id'], current_date)
             if task_key in self._reminded_tasks or task.get('reminded'):
+                logger.debug(f"Task {task['id']} already reminded, skipping")
                 continue
             
             # Parse task time
@@ -82,11 +86,20 @@ class TaskScheduler:
                 task_hour, task_minute = map(int, task_time.split(':'))
                 task_datetime = now.replace(hour=task_hour, minute=task_minute, second=0, microsecond=0)
                 
-                # Check if task is due (within the last minute)
+                # Check if task is due (current time >= task time, but not more than 5 minutes ago)
                 time_diff = (now - task_datetime).total_seconds()
-                if 0 <= time_diff <= 60:
-                    # Task is due! Send reminder
+                logger.debug(f"Task {task['id']} ({task['task_name']}) at {task_time}, time_diff: {time_diff}s")
+                
+                # Wider window: task is due if time has passed (up to 5 minutes ago) and not reminded yet
+                if 0 <= time_diff <= 300:  # 0 to 5 minutes window
+                    logger.info(f"Task {task['id']} is due! Sending reminder...")
                     await self._send_reminder(task, current_date)
+                elif time_diff > 300:
+                    # Task is more than 5 minutes past due, mark as missed
+                    logger.debug(f"Task {task['id']} is more than 5 minutes past due, marking as missed")
+                    mark_task_reminded(task['id'], current_date)
+                    task_key = (task['id'], current_date)
+                    self._reminded_tasks.add(task_key)
                     
             except (ValueError, KeyError) as e:
                 logger.error(f"Error parsing task time for task {task['id']}: {e}")

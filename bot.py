@@ -126,26 +126,62 @@ async def complete_task_command(update: Update, context: ContextTypes.DEFAULT_TY
 
 
 async def check_reminders_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Check for due reminders manually."""
+    """Show all pending tasks with their status."""
+    from datetime import datetime
+    
     user_id = update.effective_user.id
     chat_id = update.effective_chat.id
     
     # Register user for reminders
     if scheduler:
         scheduler.register_user_chat(user_id, chat_id)
-        reminders_sent = await scheduler.check_and_remind(user_id, chat_id)
-        
-        if reminders_sent == 0:
-            await update.message.reply_text(
-                "🔔 No tasks are due right now.\n\n"
-                "I'll automatically remind you when tasks are due!",
-                reply_markup=MAIN_MENU
-            )
-    else:
+    
+    # Get pending tasks
+    pending_tasks = get_pending_tasks()
+    
+    if not pending_tasks:
         await update.message.reply_text(
-            "⚠️ Reminder system is not active.",
+            "🔔 You have no pending tasks!\n\n"
+            "All caught up! 🎉",
             reply_markup=MAIN_MENU
         )
+        return
+    
+    # Format pending tasks list
+    now = datetime.now()
+    current_time = now.strftime('%H:%M')
+    
+    task_list = []
+    overdue_count = 0
+    upcoming_count = 0
+    
+    for task in pending_tasks:
+        task_time = task['time']
+        task_name = task['task_name']
+        
+        # Check if task is overdue
+        try:
+            task_hour, task_minute = map(int, task_time.split(':'))
+            task_datetime = now.replace(hour=task_hour, minute=task_minute, second=0, microsecond=0)
+            
+            if now > task_datetime:
+                # Overdue
+                status = "🔴 OVERDUE"
+                overdue_count += 1
+            else:
+                # Upcoming
+                status = "⏳ Upcoming"
+                upcoming_count += 1
+            
+            task_list.append(f"• {status} {task_name} - {task_time}")
+        except:
+            task_list.append(f"• ⏳ {task_name} - {task_time}")
+    
+    message = f"🔔 Pending Tasks ({len(pending_tasks)} total):\n\n"
+    message += "\n".join(task_list)
+    message += f"\n\n📊 {overdue_count} overdue, {upcoming_count} upcoming"
+    
+    await update.message.reply_text(message, reply_markup=MAIN_MENU)
 
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
