@@ -9,9 +9,10 @@ A smart Python Telegram bot for managing daily tasks with automatic reminders.
   - Sends "🔔 Reminder!" message at task time
   - No more forgetting your tasks!
 
-- **💬 Natural Language Commands**: Add tasks conversationally
-  - `Remind me Vacuum at 13:00`
-  - `add task Wake up at 08:00`
+- **⏱️ Flexible Time Input**: Add tasks with absolute or relative time
+  - **Absolute**: `Remind me Vacuum at 13:00`
+  - **Relative**: `Remind me Call friend in 10 minutes`
+  - **Combined**: `Remind me Meeting in 1 hour and 30 minutes`
 
 - **📱 Smart Button Interface**:
   - 📋 Show Tasks - View all tasks with completion stats
@@ -70,9 +71,21 @@ python main.py
 ## Usage 📱
 
 ### Adding Tasks
-Simply type commands like:
+
+**With Absolute Time (specific time):**
 - `Remind me Task Name at 14:30`
 - `add task Another Task at 09:00`
+
+**With Relative Time (from now):**
+- `Remind me Call a friend in 10 minutes`
+- `Remind me Meeting in 2 hours`
+- `Remind me Lunch in 1 hour and 30 minutes`
+
+**Supported Relative Formats:**
+- `in X minutes` / `in X mins` / `in Xm`
+- `in X hours` / `in X hrs` / `in Xh`
+- `in X hours and Y minutes`
+- `in XhYm` (compact format)
 
 The bot will confirm and automatically remind you when it's time!
 
@@ -145,7 +158,7 @@ Run tests with pytest:
 pytest test_parser.py test_storage.py test_integration.py -v
 ```
 
-All 22+ tests passing ✅
+All 33+ tests passing ✅
 
 ## Technologies Used 🛠️
 
