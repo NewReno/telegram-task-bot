@@ -1,19 +1,34 @@
 # Telegram Task Reminder Bot 🤖
 
-A simple Python Telegram bot for managing daily tasks with reminders.
+A smart Python Telegram bot for managing daily tasks with automatic reminders.
 
 ## Features ✨
 
-- **Natural Language Commands**: Add tasks using conversational syntax
+- **🤖 Automatic Reminders**: Get notified when tasks are due
+  - Background scheduler checks every minute
+  - Sends "🔔 Reminder!" message at task time
+  - No more forgetting your tasks!
+
+- **💬 Natural Language Commands**: Add tasks conversationally
   - `Remind me Vacuum at 13:00`
   - `add task Wake up at 08:00`
-- **Button Interface**: Easy-to-use buttons for:
-  - 📋 Show Tasks - View all tasks for today
-  - ➕ Add Task - Get help on adding tasks
-  - ❓ Help - Show available commands
-- **Daily Task Management**: Tasks stored in daily JSON files
-- **Task Statistics**: See completion progress (e.g., "2/5 tasks completed")
-- **24-Hour Time Format**: Clear time specification (HH:MM)
+
+- **📱 Smart Button Interface**:
+  - 📋 Show Tasks - View all tasks with completion stats
+  - ➕ Add Task - Get help on adding new tasks
+  - ✅ Complete Task - Mark tasks as done with inline buttons
+  - 🔔 Reminders - Manually check for due tasks
+  - ❓ Help - Show all available commands
+
+- **📊 Task Statistics**: Track your productivity
+  - See completed vs pending tasks
+  - Daily progress tracking
+
+- **⏰ 24-Hour Time Format**: Clear and simple time entry
+
+- **💾 Daily Task Storage**: Tasks saved in daily JSON files
+  - Easy backup and access
+  - No database setup required
 
 ## Setup 🚀
 
@@ -55,24 +70,46 @@ python main.py
 ## Usage 📱
 
 ### Adding Tasks
-Send messages like:
+Simply type commands like:
 - `Remind me Task Name at 14:30`
 - `add task Another Task at 09:00`
 
-### Viewing Tasks
+The bot will confirm and automatically remind you when it's time!
+
+### Automatic Reminders
+Once you add a task, the bot will:
+1. Send a confirmation: "✅ Task scheduled... I'll remind you when it's time!"
+2. Monitor the task time in the background
+3. Send a reminder notification when the task is due
+
+### Managing Tasks
+
+**View Tasks:**
 - Click **📋 Show Tasks** button
 - Or type `/list`
+
+**Complete Tasks:**
+- Click **✅ Complete Task** button
+- Select from pending tasks
+- Or type `/done`
+
+**Manual Reminder Check:**
+- Click **🔔 Reminders** button
+- Or type `/reminders`
 
 ### Bot Commands
 - `/start` - Start the bot and show welcome message
 - `/help` - Show available commands
 - `/list` - List today's tasks
+- `/done` - Mark tasks as complete
+- `/reminders` - Check for due reminders
 
 ## Project Structure 📁
 
 ```
 telegram-task-bot/
 ├── bot.py              # Telegram bot handlers and UI
+├── scheduler.py        # ⭐ Background reminder scheduler
 ├── parser.py           # Natural language command parser
 ├── storage.py          # JSON file storage operations
 ├── config.py           # Configuration and constants
@@ -87,23 +124,19 @@ telegram-task-bot/
 
 Tasks are stored in JSON files in the `data/` directory:
 - File format: `tasks_YYYY-MM-DD.json`
-- Each task includes: id, task_name, date, time, status, created_at
-
-Example:
-```json
-{
-  "date": "2026-04-27",
-  "tasks": [
-    {
-      "id": 1,
-      "task_name": "Vacuum",
-      "time": "13:00",
-      "status": "pending",
-      "created_at": "2026-04-27T09:00:00"
-    }
-  ]
-}
-```
+- Each task includes:
+  ```json
+  {
+    "id": 1,
+    "task_name": "Vacuum",
+    "date": "2026-04-27",
+    "time": "13:00",
+    "status": "pending",
+    "created_at": "2026-04-27T09:00:00",
+    "reminded": false,
+    "reminded_at": null
+  }
+  ```
 
 ## Testing 🧪
 
@@ -112,13 +145,22 @@ Run tests with pytest:
 pytest test_parser.py test_storage.py test_integration.py -v
 ```
 
-All 22 tests passing ✅
+All 22+ tests passing ✅
 
 ## Technologies Used 🛠️
 
 - [python-telegram-bot](https://python-telegram-bot.org/) - Telegram Bot API wrapper
 - Python 3.8+
 - JSON for data storage
+- Asyncio for background scheduling
+
+## How Reminders Work 🔔
+
+1. **Task Creation**: When you add a task, it's saved with time and reminder status
+2. **Background Scheduler**: Runs every minute checking for due tasks
+3. **Reminder Detection**: When current time matches task time (within 1-minute window)
+4. **Notification**: Sends "🔔 Reminder! It's time for: [Task Name]" message
+5. **Completion**: Use "✅ Complete Task" button to mark as done
 
 ## License 📄
 

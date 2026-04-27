@@ -88,3 +88,73 @@ def get_tasks(date_str: str = None) -> list:
     filename = _get_filename(date_str)
     data = _load_data(filename)
     return data['tasks']
+
+
+def get_pending_tasks(date_str: str = None) -> list:
+    """
+    Get only pending (not completed) tasks for a specific date.
+    
+    Args:
+        date_str: Date in YYYY-MM-DD format (defaults to today)
+    
+    Returns:
+        list: List of pending task dictionaries
+    """
+    tasks = get_tasks(date_str)
+    STATUS_PENDING = 'pending'
+    return [task for task in tasks if task['status'] == STATUS_PENDING]
+
+
+def mark_task_reminded(task_id: int, date_str: str = None) -> bool:
+    """
+    Mark a task as reminded to avoid duplicate reminders.
+    
+    Args:
+        task_id: ID of the task
+        date_str: Date in YYYY-MM-DD format (defaults to today)
+    
+    Returns:
+        bool: True if marked successfully, False otherwise
+    """
+    if date_str is None:
+        date_str = datetime.now().strftime('%Y-%m-%d')
+    
+    filename = _get_filename(date_str)
+    data = _load_data(filename)
+    
+    for task in data['tasks']:
+        if task['id'] == task_id:
+            task['reminded'] = True
+            task['reminded_at'] = datetime.now().isoformat()
+            _save_data(filename, data)
+            return True
+    
+    return False
+
+
+def complete_task(task_id: int, date_str: str = None) -> bool:
+    """
+    Mark a task as completed.
+    
+    Args:
+        task_id: ID of the task
+        date_str: Date in YYYY-MM-DD format (defaults to today)
+    
+    Returns:
+        bool: True if completed successfully, False otherwise
+    """
+    if date_str is None:
+        date_str = datetime.now().strftime('%Y-%m-%d')
+    
+    filename = _get_filename(date_str)
+    data = _load_data(filename)
+    STATUS_COMPLETED = 'completed'
+    
+    for task in data['tasks']:
+        if task['id'] == task_id:
+            task['status'] = STATUS_COMPLETED
+            task['completed_at'] = datetime.now().isoformat()
+            _save_data(filename, data)
+            return True
+    
+    return False
