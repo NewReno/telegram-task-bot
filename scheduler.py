@@ -96,6 +96,13 @@ class TaskScheduler:
         task_id = task['id']
         task_name = task['task_name']
         task_time = task['time']
+        user_id = task.get('user_id')
+        chat_id = task.get('chat_id')
+        
+        # Skip if no user info (old tasks without user_id)
+        if not user_id or not chat_id:
+            logger.warning(f"Cannot send reminder for task {task_id}: no user/chat info")
+            return
         
         # Mark as reminded in storage
         if mark_task_reminded(task_id, date_str):
@@ -105,10 +112,9 @@ class TaskScheduler:
             
             logger.info(f"Sending reminder for task: {task_name} at {task_time}")
             
-            # Call the reminder callback (this will send the actual message)
-            # We need user_id - for now we'll need to pass it through
-            # This is a limitation of the current architecture
-            pass
+            # Call the reminder callback to send the actual message
+            if self.reminder_callback:
+                await self.reminder_callback(user_id, chat_id, task_name, task_time)
     
     def register_user_chat(self, user_id: int, chat_id: int):
         """

@@ -222,8 +222,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     result = parse_task(message_text)
     
     if result['success']:
-        # Save the task
-        task = save_task(result['task_name'], result['time'])
+        # Save the task with user info
+        task = save_task(result['task_name'], result['time'], user_id, chat_id)
         
         await update.message.reply_text(
             f"✅ Task \"{task['task_name']}\" scheduled for {task['time']} today\n\n"

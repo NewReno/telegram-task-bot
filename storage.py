@@ -33,13 +33,15 @@ def _save_data(filename: str, data: dict) -> None:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
-def save_task(task_name: str, time_str: str, date_str: str = None) -> dict:
+def save_task(task_name: str, time_str: str, user_id: int = None, chat_id: int = None, date_str: str = None) -> dict:
     """
     Save a task to the daily JSON file.
     
     Args:
         task_name: Name/description of the task
         time_str: Time in HH:MM format
+        user_id: Telegram user ID who created the task
+        chat_id: Telegram chat ID where task was created
         date_str: Date in YYYY-MM-DD format (defaults to today)
     
     Returns:
@@ -65,6 +67,8 @@ def save_task(task_name: str, time_str: str, date_str: str = None) -> dict:
         'date': date_str,
         'time': time_str,
         'status': STATUS_PENDING,
+        'user_id': user_id,
+        'chat_id': chat_id,
         'created_at': datetime.now().isoformat(),
         'completed_at': None
     }
